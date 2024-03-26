@@ -72,7 +72,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="52dp"
         android:text="Register here."
-        android:textColor="#03A9F4"
+        android:textColor="#0580B6"
         android:textSize="20sp"
         android:textStyle="italic"
         app:layout_constraintBottom_toBottomOf="parent"
