@@ -44,12 +44,6 @@ public class LoginActivity extends AppCompatActivity {
         userName = findViewById(R.id.username_login);
         userPass = findViewById(R.id.password_login);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-
         // Find the login button by its ID
         Button loginButton = findViewById(R.id.login);
 
@@ -73,8 +67,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login() {
-        String url = "http://192.168.1.15/dishcovery/api/sign_in.php";
-        progressDialog.setMessage("Logging in");
+        String url = "http://192.168.1.18/dishcovery/api/sign_in.php";
+        progressDialog.setMessage("Signing in...");
         progressDialog.show();
 
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
