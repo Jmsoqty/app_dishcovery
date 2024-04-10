@@ -118,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void sendGoogleSignInData(String username, String email) {
-        String url = "http://192.168.1.18/dishcovery/api/add_account.php";
+        String url = "http://192.168.1.15/dishcovery/api/add_account.php";
         progressDialog.setMessage("Signing in...");
         progressDialog.show();
 
@@ -166,7 +166,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login() {
-        String url = "http://192.168.1.18/dishcovery/api/sign_in.php";
+        String url = "http://192.168.1.15/dishcovery/api/sign_in.php";
         progressDialog.setMessage("Signing in...");
         progressDialog.show();
 

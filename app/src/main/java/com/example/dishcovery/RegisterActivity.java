@@ -61,6 +61,15 @@ public class RegisterActivity extends AppCompatActivity {
         // Find the login button by its ID
         Button registerButton = findViewById(R.id.register);
 
+        TextView text = findViewById(R.id.login_activity);
+        text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
+
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,7 +118,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void sendGoogleSignInData(String username, String userEmail) {
-        String url = "http://192.168.1.18/dishcovery/api/add_account.php";
+        String url = "http://192.168.1.15/dishcovery/api/add_account.php";
         progressDialog.setMessage("Signing in...");
         progressDialog.show();
 
@@ -158,7 +167,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     // Moved register method outside onCreate
     public void register() {
-        String url = "http://192.168.1.18/dishcovery/api/sign_up.php";
+        String url = "http://192.168.1.15/dishcovery/api/sign_up.php";
         progressDialog.setMessage("Signing up...");
         progressDialog.show();
 
