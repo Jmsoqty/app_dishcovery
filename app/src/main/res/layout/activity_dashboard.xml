@@ -29,6 +29,7 @@
             android:layout_height="match_parent"
             android:id="@+id/fragment_container"/>
 
+        <include layout="@layout/nav_header"/>
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView

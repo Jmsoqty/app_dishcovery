@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="176dp"
     android:gravity="bottom"
-    android:layout_marginTop="35dp"
-    android:paddingLeft="10dp"
+    android:layout_marginTop="23dp"
+    android:padding="10dp"
     android:background="@drawable/login"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
@@ -16,18 +16,21 @@
         android:src="@drawable/logo" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:text="JM Nolasco"
+        android:layout_width="match_parent"
+        android:layout_height="28dp"
+        android:gravity="center"
+        android:text="WELCOME TO DISHCOVERY!"
         android:textColor="@color/black"
-        android:textSize="14sp"
-        android:textStyle="bold" />
+        android:textSize="20dp"
+        android:textStyle="bold"
+        />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="28dp"
-        android:layout_marginBottom="16dp"
-        android:text="nolascojm.bsit@gmail.com"
+        android:layout_marginTop="16dp"
+        android:text=""
+        android:id="@+id/account_email"
         android:textColor="@color/black"
         android:textSize="14sp" />
 
