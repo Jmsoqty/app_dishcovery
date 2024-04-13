@@ -134,7 +134,16 @@ public class DashboardActivity extends AppCompatActivity implements
                     .replace(R.id.fragment_container, myAccountFragment)
                     .commit();
         } else if (id == R.id.nav_funds) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FundsFragment()).commit();
+            FundsFragment fundsFragment = new FundsFragment();
+
+            Bundle args = new Bundle();
+            String userEmail = account_email.getText().toString();
+            args.putString("userEmail", userEmail);
+            fundsFragment.setArguments(args);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, fundsFragment)
+                    .commit();
         } else if (id == R.id.nav_logout) {
             showLogoutConfirmationDialog();
         }
