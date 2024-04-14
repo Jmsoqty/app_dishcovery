@@ -26,6 +26,13 @@ import androidx.fragment.app.DialogFragment;
 
 import java.io.IOException;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import okhttp3.*;
 public class ShareRecipeDialog extends DialogFragment {
 
     // UI components
@@ -200,11 +207,108 @@ public class ShareRecipeDialog extends DialogFragment {
     }
 
 
-    private void postRecipe() {
-        // Handle posting the recipe
-        // Add your recipe posting logic here, e.g., send data to the server or save it locally
+    private String getIngredients() {
+        // Collect ingredients from the ingredient container
+        StringBuilder ingredients = new StringBuilder();
+        int childCount = ingredientContainer.getChildCount();
 
-        // Placeholder for posting the recipe
-        Toast.makeText(requireContext(), "Recipe posted successfully!", Toast.LENGTH_SHORT).show();
+        for (int i = 0; i < childCount; i++) {
+            LinearLayout ingredientFields = (LinearLayout) ingredientContainer.getChildAt(i);
+            EditText quantityEditText = (EditText) ingredientFields.getChildAt(0);
+            EditText descriptionEditText = (EditText) ingredientFields.getChildAt(1);
+
+            String quantity = quantityEditText.getText().toString().trim();
+            String description = descriptionEditText.getText().toString().trim();
+
+            // Append the ingredient in a format like "quantity description"
+            if (!quantity.isEmpty() && !description.isEmpty()) {
+                ingredients.append(quantity).append(" ").append(description).append("\n");
+            }
+        }
+
+        return ingredients.toString().trim(); // Return the ingredients as a single string
+    }
+
+    private String getInstructions() {
+        // Collect instructions from the instruction container
+        StringBuilder instructions = new StringBuilder();
+        int childCount = instructionContainer.getChildCount();
+
+        for (int i = 0; i < childCount; i++) {
+            EditText instructionEditText = (EditText) instructionContainer.getChildAt(i);
+            String instruction = instructionEditText.getText().toString().trim();
+
+            // Append each instruction on a new line
+            if (!instruction.isEmpty()) {
+                instructions.append(instruction).append("\n");
+            }
+        }
+
+        return instructions.toString().trim(); // Return the instructions as a single string
+    }
+
+    private void postRecipe() {
+        // Retrieve the recipe name, category, ingredients, and instructions from UI components
+        String recipeName = recipeNameEditText.getText().toString().trim();
+        String category = categorySpinner.getSelectedItem().toString();
+        String ingredients = getIngredients();
+        String instructions = getInstructions();
+
+        String postedBy = getArguments() != null ? getArguments().getString("userEmail") : null;
+
+        // Check if the user has provided the necessary information
+        if (recipeName.isEmpty() || category.equals("Choose Category") || ingredients.isEmpty() || instructions.isEmpty() || postedBy == null) {
+            Toast.makeText(requireContext(), "Please fill in all required fields.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Create an OkHttpClient instance
+        OkHttpClient client = new OkHttpClient.Builder()
+                .readTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .build();
+
+        // Define the request URL
+        String url = "http://192.168.1.15/dishcovery/api/add_recipe.php";
+
+        // Build the request body with the recipe data
+        RequestBody requestBody = new FormBody.Builder()
+                .add("name", recipeName)
+                .add("category", category)
+                .add("ingredients", ingredients)
+                .add("instructions", instructions)
+                .add("posted_by", postedBy)
+                .build();
+
+        // Build the POST request
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+
+        // Execute the request asynchronously
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(requireContext(), "Failed to post recipe.", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    requireActivity().runOnUiThread(() -> {
+                        Toast.makeText(requireContext(), "Recipe posted successfully!", Toast.LENGTH_SHORT).show();
+                    });
+                } else {
+                    requireActivity().runOnUiThread(() -> {
+                        Toast.makeText(requireContext(), "Failed to post recipe.", Toast.LENGTH_SHORT).show();
+                    });
+                }
+                response.close();
+            }
+        });
     }
 }

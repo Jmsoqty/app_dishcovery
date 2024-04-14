@@ -115,7 +115,16 @@ public class DashboardActivity extends AppCompatActivity implements
         }
 
         if (id == R.id.nav_home) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+            HomeFragment homeFragment = new HomeFragment();
+
+            Bundle args = new Bundle();
+            String userEmail = account_email.getText().toString();
+            args.putString("userEmail", userEmail);
+            homeFragment.setArguments(args);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, homeFragment)
+                    .commit();
         } else if (id == R.id.nav_bookmarks) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new BookmarksFragment()).commit();
         } else if (id == R.id.nav_groups) {
@@ -151,6 +160,7 @@ public class DashboardActivity extends AppCompatActivity implements
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
+
 
     private void showLogoutConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
