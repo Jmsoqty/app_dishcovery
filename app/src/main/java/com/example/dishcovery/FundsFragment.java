@@ -52,7 +52,7 @@ public class FundsFragment extends Fragment {
     private List<Transaction> transactionsList = new ArrayList<>();
 
     private static final String TAG = "FundsFragment";
-    private static final String BASE_URL = "http://192.168.1.18/dishcovery/api/";
+    private static final String BASE_URL = "http://192.168.1.15/dishcovery/api/";
 
     private PaymentButtonContainer paymentButtonContainer;
     private View view;

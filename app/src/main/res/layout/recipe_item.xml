@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Profile Picture, Name, Date, and Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <!-- Profile Picture -->
+        <ImageView
+            android:id="@+id/profile_picture"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/default_profile"
+            android:contentDescription="Profile Picture"
+            android:layout_marginEnd="8dp"
+            android:scaleType="centerCrop" />
+
+        <!-- Name, Date, and Action Buttons -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginEnd="8dp">
+
+            <!-- Name and Date -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginEnd="16dp">
+
+                <!-- Name -->
+                <TextView
+                    android:id="@+id/username_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="John Doe"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black" />
+
+                <!-- Date -->
+                <TextView
+                    android:id="@+id/post_date_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="April 15, 2024"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <!-- Action Buttons: Edit, Delete, Bookmark, and Send Funds -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+<!--                &lt;!&ndash; Edit Recipe Button &ndash;&gt;-->
+<!--                <ImageButton-->
+<!--                    android:id="@+id/edit_recipe_button"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:src="@drawable/baseline_mode_edit_24"-->
+<!--                    android:contentDescription="Edit Button"-->
+<!--                    android:layout_marginEnd="8dp" />-->
+
+                <!-- Delete Recipe Button -->
+                <ImageButton
+                    android:id="@+id/delete_recipe_button"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_folder_delete_24"
+                    android:contentDescription="Delete Recipe"
+                    android:layout_marginStart="50dp" />
+
+                <!-- Bookmark Button -->
+                <ImageButton
+                    android:id="@+id/bookmark_button"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/nav_bookmarks"
+                    android:contentDescription="Bookmark Button" />
+
+                <!-- Send Funds Button -->
+                <ImageButton
+                    android:id="@+id/send_funds_button"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/nav_funds"
+                    android:contentDescription="Send Funds" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Recipe Name -->
+    <TextView
+        android:id="@+id/recipe_name_text"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:text="Delicious Pasta Recipe"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp" />
+
+    <!-- Dish Image -->
+    <ImageView
+        android:id="@+id/dish_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/default_profile"
+        android:contentDescription="Dish Image"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="8dp" />
+
+    <!-- Ingredients -->
+    <TextView
+        android:id="@+id/ingredients_label_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ingredients:"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/ingredients_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1pc - Mushrooms\n2pcs - Jollibee"
+        android:textColor="@android:color/black"
+        android:layout_marginTop="4dp" />
+
+    <!-- Instructions -->
+    <TextView
+        android:id="@+id/instructions_label_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Instructions:"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/instructions_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1. Cook pasta according to package instructions.\n2. Warm the tomato sauce.\n3. Combine pasta and sauce.\n4. Top with cheese and spices."
+        android:textColor="@android:color/black"
+        android:layout_marginTop="4dp" />
+
+    <!-- Horizontal Line -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginTop="16dp" />
+
+    <!-- Commenting Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="16dp">
+
+        <ImageButton
+            android:id="@+id/comment_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_insert_comment_24"
+            android:contentDescription="Comment Icon"
+            android:layout_marginEnd="8dp" />
+
+        <!-- EditText for Comment -->
+        <EditText
+            android:id="@+id/comment_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Write a comment..."
+            android:layout_marginEnd="8dp"
+            android:padding="8dp" />
+
+        <!-- Send Icon -->
+        <ImageButton
+            android:id="@+id/send_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_send_24"
+            android:contentDescription="Send Comment"
+            android:background="@null" />
+    </LinearLayout>
+</LinearLayout>
