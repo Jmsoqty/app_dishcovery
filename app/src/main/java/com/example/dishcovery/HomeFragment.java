@@ -1,11 +1,11 @@
 package com.example.dishcovery;
 
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -26,7 +26,6 @@ public class HomeFragment extends Fragment {
 
         // Retrieve the user's email from arguments, if available
         String email = getArguments() != null ? getArguments().getString("userEmail") : null;
-
         // Set up a click listener for the FAB
         fabAdd.setOnClickListener(v -> {
             // Create an instance of ShareRecipeDialog

@@ -78,7 +78,6 @@ public class MyAccountFragment extends Fragment {
 
         // Retrieve email from arguments
         String email = getArguments() != null ? getArguments().getString("userEmail") : null;
-
         if (email != null && !email.isEmpty()) {
             loadUserProfile(email);
         } else {

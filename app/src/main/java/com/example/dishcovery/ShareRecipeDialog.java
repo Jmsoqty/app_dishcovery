@@ -5,6 +5,9 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,15 +27,22 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.DialogFragment;
 
-import java.io.IOException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-import okhttp3.*;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 public class ShareRecipeDialog extends DialogFragment {
 
     // UI components
@@ -207,78 +217,79 @@ public class ShareRecipeDialog extends DialogFragment {
     }
 
 
-    private String getIngredients() {
-        // Collect ingredients from the ingredient container
-        StringBuilder ingredients = new StringBuilder();
-        int childCount = ingredientContainer.getChildCount();
-
-        for (int i = 0; i < childCount; i++) {
-            LinearLayout ingredientFields = (LinearLayout) ingredientContainer.getChildAt(i);
-            EditText quantityEditText = (EditText) ingredientFields.getChildAt(0);
-            EditText descriptionEditText = (EditText) ingredientFields.getChildAt(1);
-
-            String quantity = quantityEditText.getText().toString().trim();
-            String description = descriptionEditText.getText().toString().trim();
-
-            // Append the ingredient in a format like "quantity description"
-            if (!quantity.isEmpty() && !description.isEmpty()) {
-                ingredients.append(quantity).append(" ").append(description).append("\n");
-            }
-        }
-
-        return ingredients.toString().trim(); // Return the ingredients as a single string
-    }
-
-    private String getInstructions() {
-        // Collect instructions from the instruction container
-        StringBuilder instructions = new StringBuilder();
-        int childCount = instructionContainer.getChildCount();
-
-        for (int i = 0; i < childCount; i++) {
-            EditText instructionEditText = (EditText) instructionContainer.getChildAt(i);
-            String instruction = instructionEditText.getText().toString().trim();
-
-            // Append each instruction on a new line
-            if (!instruction.isEmpty()) {
-                instructions.append(instruction).append("\n");
-            }
-        }
-
-        return instructions.toString().trim(); // Return the instructions as a single string
-    }
-
     private void postRecipe() {
-        // Retrieve the recipe name, category, ingredients, and instructions from UI components
+        // Retrieve the recipe name, category, and postedBy from UI components
         String recipeName = recipeNameEditText.getText().toString().trim();
         String category = categorySpinner.getSelectedItem().toString();
-        String ingredients = getIngredients();
-        String instructions = getInstructions();
-
         String postedBy = getArguments() != null ? getArguments().getString("userEmail") : null;
+        Drawable drawable = imagePreview.getDrawable();
 
-        // Check if the user has provided the necessary information
-        if (recipeName.isEmpty() || category.equals("Choose Category") || ingredients.isEmpty() || instructions.isEmpty() || postedBy == null) {
-            Toast.makeText(requireContext(), "Please fill in all required fields.", Toast.LENGTH_SHORT).show();
+        // Initialize ingredients and instructions as empty strings
+        String ingredientsJson = getIngredientsAsJson();
+        String instructionsJson = getInstructionsAsJson();
+
+        // Validate the required input fields
+        if (recipeName.isEmpty()) {
+            Toast.makeText(requireContext(), "Please enter a recipe name.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Create an OkHttpClient instance
+        if (category.equals("Choose Category")) {
+            Toast.makeText(requireContext(), "Please select a category.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (drawable == null) {
+            Toast.makeText(requireContext(), "Please select an image for the recipe.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (ingredientsJson.isEmpty() || ingredientsJson.equals("[]")) {
+            Toast.makeText(requireContext(), "Please add at least one ingredient.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (instructionsJson.isEmpty() || instructionsJson.equals("[]")) {
+            Toast.makeText(requireContext(), "Please add at least one instruction.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Convert the drawable to a bitmap
+        Bitmap imageBitmap = null;
+        if (drawable instanceof BitmapDrawable) {
+            imageBitmap = ((BitmapDrawable) drawable).getBitmap();
+        } else {
+            // Convert the drawable to a bitmap
+            imageBitmap = convertDrawableToBitmap(drawable);
+        }
+
+        // Convert the image to a byte array
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream);
+        byte[] imageData = byteArrayOutputStream.toByteArray();
+
+        // Create a multipart request body
+        MultipartBody.Builder multipartBuilder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("recipe_name", recipeName)
+                .addFormDataPart("category_name", category)
+                .addFormDataPart("email", postedBy)
+                .addFormDataPart("ingredients", ingredientsJson)
+                .addFormDataPart("instructions", instructionsJson)
+                .addFormDataPart("image", "recipe.jpg",
+                        RequestBody.create(MediaType.parse("image/jpeg"), imageData));
+
+        // Build the request body
+        RequestBody requestBody = multipartBuilder.build();
+
+        // Create OkHttpClient instance
         OkHttpClient client = new OkHttpClient.Builder()
                 .readTimeout(30, TimeUnit.SECONDS)
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .build();
 
         // Define the request URL
-        String url = "http://192.168.1.15/dishcovery/api/add_recipe.php";
-
-        // Build the request body with the recipe data
-        RequestBody requestBody = new FormBody.Builder()
-                .add("name", recipeName)
-                .add("category", category)
-                .add("ingredients", ingredients)
-                .add("instructions", instructions)
-                .add("posted_by", postedBy)
-                .build();
+        String url = "http://192.168.1.18/dishcovery/api/add_recipe.php";
 
         // Build the POST request
         Request request = new Request.Builder()
@@ -291,8 +302,7 @@ public class ShareRecipeDialog extends DialogFragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 requireActivity().runOnUiThread(() -> {
-                    Toast.makeText(requireContext(), "Failed to post recipe.", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
+                    Toast.makeText(requireContext(), "Failed to post recipe: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
             }
 
@@ -301,14 +311,82 @@ public class ShareRecipeDialog extends DialogFragment {
                 if (response.isSuccessful()) {
                     requireActivity().runOnUiThread(() -> {
                         Toast.makeText(requireContext(), "Recipe posted successfully!", Toast.LENGTH_SHORT).show();
+                        // Clear input fields after successful posting
+                        recipeNameEditText.setText("");
+                        categorySpinner.setSelection(0);
+                        ingredientContainer.removeAllViews();
+                        instructionContainer.removeAllViews();
+                        imagePreview.setImageDrawable(null);
+                        dismiss();
                     });
                 } else {
                     requireActivity().runOnUiThread(() -> {
-                        Toast.makeText(requireContext(), "Failed to post recipe.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "Failed to post recipe: " + response.message(), Toast.LENGTH_SHORT).show();
                     });
                 }
                 response.close();
             }
         });
+    }
+
+    // Convert a drawable to a bitmap
+    private Bitmap convertDrawableToBitmap(Drawable drawable) {
+        Bitmap bitmap;
+        if (drawable instanceof BitmapDrawable) {
+            bitmap = ((BitmapDrawable) drawable).getBitmap();
+        } else {
+            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+        }
+        return bitmap;
+    }
+
+    // Convert the ingredients to a JSON string
+    private String getIngredientsAsJson() {
+        JSONArray jsonArray = new JSONArray();
+        int childCount = ingredientContainer.getChildCount();
+
+        for (int i = 0; i < childCount; i++) {
+            LinearLayout ingredientFields = (LinearLayout) ingredientContainer.getChildAt(i);
+            EditText quantityEditText = (EditText) ingredientFields.getChildAt(0);
+            EditText descriptionEditText = (EditText) ingredientFields.getChildAt(1);
+
+            String quantity = quantityEditText.getText().toString().trim();
+            String description = descriptionEditText.getText().toString().trim();
+
+            // Create a JSON object for each ingredient
+            if (!quantity.isEmpty() && !description.isEmpty()) {
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("qty", quantity);
+                    jsonObject.put("title", description);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                jsonArray.put(jsonObject);
+            }
+        }
+
+        return jsonArray.toString();
+    }
+
+    // Convert the instructions to a JSON string
+    private String getInstructionsAsJson() {
+        JSONArray jsonArray = new JSONArray();
+        int childCount = instructionContainer.getChildCount();
+
+        for (int i = 0; i < childCount; i++) {
+            EditText instructionEditText = (EditText) instructionContainer.getChildAt(i);
+            String instruction = instructionEditText.getText().toString().trim();
+
+            // Add each instruction as a JSON element
+            if (!instruction.isEmpty()) {
+                jsonArray.put(instruction);
+            }
+        }
+
+        return jsonArray.toString();
     }
 }

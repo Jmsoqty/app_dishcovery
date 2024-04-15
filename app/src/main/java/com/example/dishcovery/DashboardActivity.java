@@ -24,8 +24,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.navigation.NavigationView;
 
-public class DashboardActivity extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener {
+public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
     private GoogleSignInClient googleSignInClient;
@@ -53,13 +52,27 @@ public class DashboardActivity extends AppCompatActivity implements
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
-            navigationView.setCheckedItem(R.id.nav_home);
-        }
-
         // Update account information
         updateAccountInformation();
+
+        // Retrieve user email
+        String userEmail = account_email.getText().toString();
+
+        // Create a Bundle for HomeFragment arguments
+        Bundle args = new Bundle();
+        args.putString("userEmail", userEmail);
+
+        // Create HomeFragment and set arguments
+        HomeFragment homeFragment = new HomeFragment();
+        homeFragment.setArguments(args);
+
+        // Load HomeFragment as the initial fragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, homeFragment)
+                .commit();
+
+        // Check the navigation item for HomeFragment
+        navigationView.setCheckedItem(R.id.nav_home);
     }
 
     @Override
@@ -89,23 +102,6 @@ public class DashboardActivity extends AppCompatActivity implements
         }
     }
 
-
-    private void clearSharedPreferences() {
-        // Access SharedPreferences using the context and specify a name for the preferences file
-        SharedPreferences sharedPreferences = getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
-        editor.apply();
-    }
-
-    private void saveLoginStatus(boolean isLoggedIn) {
-        // Access SharedPreferences using the context and specify a name for the preferences file
-        SharedPreferences preferences = getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean("isLoggedIn", isLoggedIn);
-        editor.apply();
-    }
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -114,45 +110,45 @@ public class DashboardActivity extends AppCompatActivity implements
             item.setChecked(true);
         }
 
+        Bundle args;
+        String userEmail = account_email.getText().toString();
+
         if (id == R.id.nav_home) {
             HomeFragment homeFragment = new HomeFragment();
-
-            Bundle args = new Bundle();
-            String userEmail = account_email.getText().toString();
+            args = new Bundle();
             args.putString("userEmail", userEmail);
             homeFragment.setArguments(args);
-
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, homeFragment)
-                    .commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, homeFragment).commit();
         } else if (id == R.id.nav_bookmarks) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new BookmarksFragment()).commit();
+            BookmarksFragment bookmarksFragment = new BookmarksFragment();
+            args = new Bundle();
+            args.putString("userEmail", userEmail);
+            bookmarksFragment.setArguments(args);
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, bookmarksFragment).commit();
         } else if (id == R.id.nav_groups) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new GroupsFragment()).commit();
+            GroupsFragment groupsFragment = new GroupsFragment();
+            args = new Bundle();
+            args.putString("userEmail", userEmail);
+            groupsFragment.setArguments(args);
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, groupsFragment).commit();
         } else if (id == R.id.nav_shared_recipes) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SharedRecipesFragment()).commit();
+            SharedRecipesFragment sharedRecipesFragment = new SharedRecipesFragment();
+            args = new Bundle();
+            args.putString("userEmail", userEmail);
+            sharedRecipesFragment.setArguments(args);
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, sharedRecipesFragment).commit();
         } else if (id == R.id.nav_my_account) {
             MyAccountFragment myAccountFragment = new MyAccountFragment();
-
-            Bundle args = new Bundle();
-            String userEmail = account_email.getText().toString();
+            args = new Bundle();
             args.putString("userEmail", userEmail);
             myAccountFragment.setArguments(args);
-
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, myAccountFragment)
-                    .commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, myAccountFragment).commit();
         } else if (id == R.id.nav_funds) {
             FundsFragment fundsFragment = new FundsFragment();
-
-            Bundle args = new Bundle();
-            String userEmail = account_email.getText().toString();
+            args = new Bundle();
             args.putString("userEmail", userEmail);
             fundsFragment.setArguments(args);
-
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, fundsFragment)
-                    .commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fundsFragment).commit();
         } else if (id == R.id.nav_logout) {
             showLogoutConfirmationDialog();
         }
@@ -160,7 +156,6 @@ public class DashboardActivity extends AppCompatActivity implements
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
-
 
     private void showLogoutConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -213,5 +208,21 @@ public class DashboardActivity extends AppCompatActivity implements
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void clearSharedPreferences() {
+        // Access SharedPreferences using the context and specify a name for the preferences file
+        SharedPreferences sharedPreferences = getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+    }
+
+    private void saveLoginStatus(boolean isLoggedIn) {
+        // Access SharedPreferences using the context and specify a name for the preferences file
+        SharedPreferences preferences = getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("isLoggedIn", isLoggedIn);
+        editor.apply();
     }
 }

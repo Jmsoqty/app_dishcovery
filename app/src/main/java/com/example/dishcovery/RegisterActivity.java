@@ -119,7 +119,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void sendGoogleSignInData(String username, String email) {
-        String url = "http://192.168.1.15/dishcovery/api/add_account.php";
+        String url = "http://192.168.1.18/dishcovery/api/add_account.php";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -172,7 +172,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     // Moved register method outside onCreate
     public void register() {
-        String url = "http://192.168.1.15/dishcovery/api/sign_up.php";
+        String url = "http://192.168.1.18/dishcovery/api/sign_up.php";
 
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override

@@ -125,7 +125,7 @@
             android:id="@+id/image_preview"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:src="@drawable/default_profile"
+            android:background="@drawable/default_profile"
             android:scaleType="centerCrop"
             android:layout_gravity="center" />
 
