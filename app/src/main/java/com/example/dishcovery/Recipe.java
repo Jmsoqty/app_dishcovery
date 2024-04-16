@@ -15,6 +15,7 @@ import java.util.Map;
 public class Recipe {
     public RecipeData recipe_data; // Nested class for recipe data
     public List<String> formatted_ingredients;
+    private boolean bookmarked;
 
     public static class RecipeData {
         public String recipe_id;
@@ -102,6 +103,15 @@ public class Recipe {
         return recipe_data.image;
     }
 
+    // Getter for bookmarked
+    public boolean isBookmarked() {
+        return bookmarked;
+    }
+
+    public void setBookmarked(boolean bookmarked) {
+        this.bookmarked = bookmarked;
+    }
+
     // Getter for posted_by_image (Base64-encoded profile picture)
     public String getPostedByImage() {
         return recipe_data.posted_by_image;
@@ -121,7 +131,6 @@ public class Recipe {
     public String getPostedBy() {
         return recipe_data.posted_by;
     }
-
     // Getter for posted_by_name
     public String getPostedByName() {
         return recipe_data.posted_by_name;

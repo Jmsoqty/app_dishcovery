@@ -1,29 +1,32 @@
 package com.example.dishcovery;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import java.io.IOException;
-import com.example.dishcovery.Recipe;
-import com.google.gson.reflect.TypeToken;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.widget.EditText;
 
 public class HomeFragment extends Fragment {
 
@@ -80,7 +83,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void fetchData() {
-        String url = "http://192.168.1.15/dishcovery/api/fetch_recipes.php"; // API URL
+        String url = "http://192.168.1.18/dishcovery/api/fetch_recipes.php"; // API URL
 
         Request request = new Request.Builder()
                 .url(url)
@@ -100,7 +103,8 @@ public class HomeFragment extends Fragment {
                     Gson gson = new Gson();
 
                     // Define the type for the list of Recipe objects
-                    Type listType = new TypeToken<List<Map<String, Object>>>() {}.getType();
+                    Type listType = new TypeToken<List<Map<String, Object>>>() {
+                    }.getType();
 
                     Map<String, Object> responseData = gson.fromJson(jsonData, Map.class);
 
@@ -130,4 +134,6 @@ public class HomeFragment extends Fragment {
 
         return recipes;
     }
+
+
 }

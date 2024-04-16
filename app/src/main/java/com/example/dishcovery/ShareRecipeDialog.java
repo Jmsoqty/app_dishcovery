@@ -289,7 +289,7 @@ public class ShareRecipeDialog extends DialogFragment {
                 .build();
 
         // Define the request URL
-        String url = "http://192.168.1.15/dishcovery/api/add_recipe.php";
+        String url = "http://192.168.1.18/dishcovery/api/add_recipe.php";
 
         // Build the POST request
         Request request = new Request.Builder()

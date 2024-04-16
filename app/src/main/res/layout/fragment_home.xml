@@ -7,13 +7,28 @@
     android:padding="16dp">
 
     <!-- Search Bar -->
-    <EditText
-        android:id="@+id/search_bar"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Search..."
-        android:layout_margin="16dp"
-        android:padding="10dp" />
+        android:orientation="horizontal">
+
+        <!-- Search Bar (EditText) -->
+        <EditText
+            android:id="@+id/search_bar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Search..." />
+
+        <!-- Search Icon (ImageView) -->
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="46dp"
+            android:contentDescription="Search Icon"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:src="@drawable/search" />
+    </LinearLayout>
 
     <!-- RecyclerView to display list of recipes -->
     <androidx.recyclerview.widget.RecyclerView

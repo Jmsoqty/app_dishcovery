@@ -79,15 +79,17 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/baseline_folder_delete_24"
                     android:contentDescription="Delete Recipe"
-                    android:layout_marginStart="50dp" />
+                    android:layout_marginStart="50dp"
+                    android:background="@null"/>
 
                 <!-- Bookmark Button -->
                 <ImageButton
                     android:id="@+id/bookmark_button"
                     android:layout_width="40dp"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/nav_bookmarks"
-                    android:contentDescription="Bookmark Button" />
+                    android:src="@drawable/not_bookmarked"
+                    android:contentDescription="Bookmark Button"
+                    android:background="@null"/>
 
                 <!-- Send Funds Button -->
                 <ImageButton
@@ -95,7 +97,8 @@
                     android:layout_width="40dp"
                     android:layout_height="wrap_content"
                     android:src="@drawable/nav_funds"
-                    android:contentDescription="Send Funds" />
+                    android:contentDescription="Send Funds"
+                    android:background="@null"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -180,7 +183,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_insert_comment_24"
             android:contentDescription="Comment Icon"
-            android:layout_marginEnd="8dp" />
+            android:layout_marginEnd="8dp"
+            android:background="@null"/>
 
         <!-- EditText for Comment -->
         <EditText
@@ -194,11 +198,16 @@
 
         <!-- Send Icon -->
         <ImageButton
-            android:id="@+id/send_button"
+            android:id="@+id/send_button_outside"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_send_24"
             android:contentDescription="Send Comment"
             android:background="@null" />
     </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_marginTop="16dp" />
 </LinearLayout>
