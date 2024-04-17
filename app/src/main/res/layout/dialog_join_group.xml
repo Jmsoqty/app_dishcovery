@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Join Group"
+        android:textSize="24sp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="12dp" />
+
+    <!-- Search bar with icon -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="20dp">
+
+        <EditText
+            android:id="@+id/et_search_group_joined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Search for groups"
+            android:padding="8dp" />
+
+        <ImageView
+            android:id="@+id/search_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/search"
+            android:contentDescription="Search icon"
+            android:padding="8dp"
+            android:layout_gravity="center_vertical" />
+
+    </LinearLayout>
+
+    <!-- Sub-title: Available Groups -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Available Groups"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="8dp" />
+
+    <!-- Headers for Community Name, No. of Members, Date Created -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Community Name"
+            android:textSize="13dp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:padding="5dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:text="No. of Members"
+            android:textSize="13dp"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:padding="5dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Date Created"
+            android:textStyle="bold"
+            android:textSize="13dp"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:padding="5dp" />
+    </LinearLayout>
+
+    <!-- TextView for 'No groups available' -->
+    <TextView
+        android:id="@+id/no_groups_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="No groups available"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:visibility="gone" /> <!-- Initially hidden -->
+
+    <!-- RecyclerView for available groups -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_available_groups"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp" />
+
+    <!-- Join Group button -->
+    <Button
+        android:id="@+id/btn_join_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Join Group"
+        android:textColor="@color/black"
+        android:layout_marginTop="16dp"
+        android:padding="12dp" />
+</LinearLayout>
