@@ -41,8 +41,8 @@ import okhttp3.Response;
 public class MyAccountFragment extends Fragment {
     // Define the callback interface
 
-    private static final String PROFILE_FETCH_URL = "http://192.168.1.18/dishcovery/api/fetch_profile.php";
-    private static final String UPDATE_PROFILE_URL = "http://192.168.1.18/dishcovery/api/update_profile.php";
+    private static final String PROFILE_FETCH_URL = "http://192.168.1.15/dishcovery/api/fetch_profile.php";
+    private static final String UPDATE_PROFILE_URL = "http://192.168.1.15/dishcovery/api/update_profile.php";
 
     private ImageView profileImageView;
     private Button uploadImageButton;

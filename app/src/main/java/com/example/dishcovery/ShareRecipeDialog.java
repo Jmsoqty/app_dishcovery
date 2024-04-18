@@ -118,8 +118,13 @@ public class ShareRecipeDialog extends DialogFragment {
         // Open image picker on button click
         selectImageButton.setOnClickListener(v -> requestImagePermission());
 
-        // Handle posting the recipe on button click
-        postRecipeButton.setOnClickListener(view -> postRecipe());
+        String postedIn = getArguments() != null ? getArguments().getString("community") : null;
+
+        if (postedIn != null) {
+            postRecipeButton.setOnClickListener(view -> postRecipeIfInCommunity());
+        } else {
+            postRecipeButton.setOnClickListener(view -> postRecipe());
+        }
     }
 
     private void requestImagePermission() {
@@ -289,7 +294,121 @@ public class ShareRecipeDialog extends DialogFragment {
                 .build();
 
         // Define the request URL
-        String url = "http://192.168.1.18/dishcovery/api/add_recipe.php";
+        String url = "http://192.168.1.15/dishcovery/api/add_recipe.php";
+
+        // Build the POST request
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+
+        // Execute the request asynchronously
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(requireContext(), "Failed to post recipe: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    requireActivity().runOnUiThread(() -> {
+                        Toast.makeText(requireContext(), "Recipe posted successfully!", Toast.LENGTH_SHORT).show();
+                        // Clear input fields after successful posting
+                        recipeNameEditText.setText("");
+                        categorySpinner.setSelection(0);
+                        ingredientContainer.removeAllViews();
+                        instructionContainer.removeAllViews();
+                        imagePreview.setImageDrawable(null);
+                        dismiss();
+                    });
+                } else {
+                    requireActivity().runOnUiThread(() -> {
+                        Toast.makeText(requireContext(), "Failed to post recipe: " + response.message(), Toast.LENGTH_SHORT).show();
+                    });
+                }
+                response.close();
+            }
+        });
+    }
+
+    private void postRecipeIfInCommunity() {
+        // Retrieve the recipe name, category, and postedBy from UI components
+        String recipeName = recipeNameEditText.getText().toString().trim();
+        String category = categorySpinner.getSelectedItem().toString();
+        String postedBy = getArguments() != null ? getArguments().getString("userEmail") : null;
+        String postedIn = getArguments() != null ? getArguments().getString("community") : null;
+        Drawable drawable = imagePreview.getDrawable();
+
+        // Initialize ingredients and instructions as empty strings
+        String ingredientsJson = getIngredientsAsJson();
+        String instructionsJson = getInstructionsAsJson();
+
+        // Validate the required input fields
+        if (recipeName.isEmpty()) {
+            Toast.makeText(requireContext(), "Please enter a recipe name.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (category.equals("Choose Category")) {
+            Toast.makeText(requireContext(), "Please select a category.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (drawable == null) {
+            Toast.makeText(requireContext(), "Please select an image for the recipe.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (ingredientsJson.isEmpty() || ingredientsJson.equals("[]")) {
+            Toast.makeText(requireContext(), "Please add at least one ingredient.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (instructionsJson.isEmpty() || instructionsJson.equals("[]")) {
+            Toast.makeText(requireContext(), "Please add at least one instruction.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Convert the drawable to a bitmap
+        Bitmap imageBitmap = null;
+        if (drawable instanceof BitmapDrawable) {
+            imageBitmap = ((BitmapDrawable) drawable).getBitmap();
+        } else {
+            // Convert the drawable to a bitmap
+            imageBitmap = convertDrawableToBitmap(drawable);
+        }
+
+        // Convert the image to a byte array
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream);
+        byte[] imageData = byteArrayOutputStream.toByteArray();
+
+        // Create a multipart request body
+        MultipartBody.Builder multipartBuilder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("recipe_name", recipeName)
+                .addFormDataPart("category_name", category)
+                .addFormDataPart("email", postedBy)
+                .addFormDataPart("ingredients", ingredientsJson)
+                .addFormDataPart("instructions", instructionsJson)
+                .addFormDataPart("community_name", postedIn)
+                .addFormDataPart("image", "recipe.jpg",
+                        RequestBody.create(MediaType.parse("image/jpeg"), imageData));
+
+        // Build the request body
+        RequestBody requestBody = multipartBuilder.build();
+
+        // Create OkHttpClient instance
+        OkHttpClient client = new OkHttpClient.Builder()
+                .readTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .build();
+
+        // Define the request URL
+        String url = "http://192.168.1.15/dishcovery/api/add_recipe_to_group.php";
 
         // Build the POST request
         Request request = new Request.Builder()

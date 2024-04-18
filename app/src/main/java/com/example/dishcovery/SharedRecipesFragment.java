@@ -98,7 +98,7 @@ public class SharedRecipesFragment extends Fragment {
         }
 
         // API URL for the POST request
-        String url = "http://192.168.1.18/dishcovery/api/fetch_my_recipes.php";
+        String url = "http://192.168.1.15/dishcovery/api/fetch_my_recipes.php";
 
         // Create the request body with the email parameter
         RequestBody requestBody = new FormBody.Builder()

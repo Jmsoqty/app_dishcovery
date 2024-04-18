@@ -66,7 +66,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     private String donationAmountStr;
     void fetchComments(String recipeId, Consumer<List<Comment>> callback) {
         // Define the URL for fetching comments, with the recipe ID as a query parameter
-        String url = "http://192.168.1.18/dishcovery/api/fetch_comments.php?recipe_id=" + recipeId;
+        String url = "http://192.168.1.15/dishcovery/api/fetch_comments.php?recipe_id=" + recipeId;
 
         // Create a GET request
         Request request = new Request.Builder()
@@ -370,7 +370,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                     .build();
 
             // Define the URL of your API endpoint
-            String url = "http://192.168.1.18/dishcovery/api/donate.php";
+            String url = "http://192.168.1.15/dishcovery/api/donate.php";
 
             // Create a POST request
             Request request = new Request.Builder()
@@ -516,7 +516,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
         private void deleteCommentFromServer(String recipeId, String commentId, LinearLayout commentsSection, View commentView) {
             // Define the URL for deleting the comment
-            String url = "http://192.168.1.18/dishcovery/api/delete_comment.php";
+            String url = "http://192.168.1.15/dishcovery/api/delete_comment.php";
 
             // Create a request body with the comment ID and recipe ID
             RequestBody formBody = new FormBody.Builder()
@@ -551,7 +551,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
         private void postComment(String recipeId, String commentText, Context context, Runnable onSuccess) {
             // Define the URL for posting a comment
-            String url = "http://192.168.1.18/dishcovery/api/add_comment.php";
+            String url = "http://192.168.1.15/dishcovery/api/add_comment.php";
 
             // Create a request body with the recipe ID and comment text
             RequestBody formBody = new FormBody.Builder()
@@ -588,7 +588,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
         private void postCommentOutside(String recipeId, String commentText, Context context, Runnable onSuccess) {
             // Define the URL for posting a comment
-            String url = "http://192.168.1.18/dishcovery/api/add_comment.php";
+            String url = "http://192.168.1.15/dishcovery/api/add_comment.php";
 
             // Create a request body with the recipe ID and comment text
             RequestBody formBody = new FormBody.Builder()
@@ -721,7 +721,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                 .build();
 
         Request request = new Request.Builder()
-                .url("http://192.168.1.18/dishcovery/api/delete_recipe.php")
+                .url("http://192.168.1.15/dishcovery/api/delete_recipe.php")
                 .post(formBody)
                 .build();
 
@@ -748,7 +748,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     }
     public void fetchCurrentBalance(Consumer<Double> callback) {
         // Define the URL for fetching the current balance
-        String url = "http://192.168.1.18/dishcovery/api/fetch_balance.php";
+        String url = "http://192.168.1.15/dishcovery/api/fetch_balance.php";
 
         // Create a request with the current user's email as a parameter
         RequestBody formBody = new FormBody.Builder()
@@ -802,7 +802,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                 .build();
 
         Request request = new Request.Builder()
-                .url("http://192.168.1.18/dishcovery/api/add_bookmark.php")
+                .url("http://192.168.1.15/dishcovery/api/add_bookmark.php")
                 .post(formBody)
                 .build();
 
@@ -829,7 +829,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                 .build();
 
         Request request = new Request.Builder()
-                .url("http://192.168.1.18/dishcovery/api/remove_bookmark.php")
+                .url("http://192.168.1.15/dishcovery/api/remove_bookmark.php")
                 .post(formBody)
                 .build();
 
@@ -865,7 +865,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                 .build();
 
         Request request = new Request.Builder()
-                .url("http://192.168.1.18/dishcovery/api/IsBookmarked.php")
+                .url("http://192.168.1.15/dishcovery/api/IsBookmarked.php")
                 .post(formBody)
                 .build();
 

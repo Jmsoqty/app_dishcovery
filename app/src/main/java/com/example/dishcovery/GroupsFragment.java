@@ -84,14 +84,30 @@ public class GroupsFragment extends Fragment {
             recipeRecyclerView.setAdapter(recipeAdapter);
 
             // Set the click listener for Floating Action Button
+            // Set the click listener for Floating Action Button
             fabAdd.setOnClickListener(v -> {
                 ShareRecipeDialog shareRecipeDialog = new ShareRecipeDialog();
-                shareRecipeDialog.setArguments(args);
+
+                // Create a new Bundle to pass arguments to the dialog
+                Bundle dialogArgs = new Bundle();
+                // Add the community name to the Bundle
+                dialogArgs.putString("community", community);
+
+                // Add userEmail argument if present in args
+                if (args != null) {
+                    dialogArgs.putString("userEmail", args.getString("userEmail"));
+                }
+
+                // Set the arguments for the ShareRecipeDialog
+                shareRecipeDialog.setArguments(dialogArgs);
+
+                // Show the ShareRecipeDialog
                 shareRecipeDialog.show(getParentFragmentManager(), "ShareRecipeDialog");
             });
 
+
             // Fetch data for the RecyclerView
-            fetchData();
+            fetchData(community);
         } else {
             recipeRecyclerView.setVisibility(View.GONE);
             fabAdd.setVisibility(View.GONE);
@@ -404,7 +420,7 @@ public class GroupsFragment extends Fragment {
 
         private void fetchAvailableGroups(GroupAdapter adapter, TextView noGroupsTextView) {
         // Define the API URL for fetching available groups
-        String url = "http://192.168.1.18/dishcovery/api/fetch_joined_groups.php";
+        String url = "http://192.168.1.15/dishcovery/api/fetch_joined_groups.php";
 
         // Create a request body with the email parameter
         RequestBody requestBody = new FormBody.Builder()
@@ -475,7 +491,7 @@ public class GroupsFragment extends Fragment {
 
     private void fetchAvailableGroupsToVisit(GroupAdapter adapter, TextView noGroupsTextView) {
         // Define the API URL for fetching available groups
-        String url = "http://192.168.1.18/dishcovery/api/fetch_visit_groups.php";
+        String url = "http://192.168.1.15/dishcovery/api/fetch_visit_groups.php";
 
         // Create a request body with the email parameter
         RequestBody requestBody = new FormBody.Builder()
@@ -546,7 +562,7 @@ public class GroupsFragment extends Fragment {
 
     private void joinGroup(String groupName, AlertDialog dialog) {
         // Define the API URL for joining a group
-        String url = "http://192.168.1.18/dishcovery/api/join_group.php";
+        String url = "http://192.168.1.15/dishcovery/api/join_group.php";
 
         // Create a request body with the group name and user email
         RequestBody requestBody = new FormBody.Builder()
@@ -585,7 +601,7 @@ public class GroupsFragment extends Fragment {
 
     private void createGroup(String groupName, AlertDialog dialog) {
         // Define the API URL for creating a group
-        String url = "http://192.168.1.18/dishcovery/api/create_group.php";
+        String url = "http://192.168.1.15/dishcovery/api/create_group.php";
 
         // Create a request body with the group name and user email
         RequestBody requestBody = new FormBody.Builder()
@@ -631,7 +647,7 @@ public class GroupsFragment extends Fragment {
 
     private void leaveGroup(String groupName, String email, AlertDialog dialog) {
         // Define the API URL for creating a group
-        String url = "http://192.168.1.18/dishcovery/api/leave_group.php";
+        String url = "http://192.168.1.15/dishcovery/api/leave_group.php";
 
         // Create a request body with the group name and user email
         RequestBody requestBody = new FormBody.Builder()
@@ -675,8 +691,8 @@ public class GroupsFragment extends Fragment {
         });
     }
 
-    private void fetchData() {
-        String url = "http://192.168.1.18/dishcovery/api/fetch_recipes.php"; // API URL
+    private void fetchData(String communityName) {
+        String url = "http://192.168.1.15/dishcovery/api/fetch_recipes_from_groups.php?community=" + communityName; // API URL with community parameter
 
         Request request = new Request.Builder()
                 .url(url)
@@ -696,8 +712,7 @@ public class GroupsFragment extends Fragment {
                     Gson gson = new Gson();
 
                     // Define the type for the list of Recipe objects
-                    Type listType = new TypeToken<List<Map<String, Object>>>() {
-                    }.getType();
+                    Type listType = new TypeToken<List<Map<String, Object>>>() {}.getType();
 
                     Map<String, Object> responseData = gson.fromJson(jsonData, Map.class);
 
