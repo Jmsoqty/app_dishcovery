@@ -83,7 +83,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void fetchData() {
-        String url = "http://192.168.1.15/dishcovery/api/fetch_recipes.php"; // API URL
+        String url = "http://192.168.1.12/dishcovery/api/fetch_recipes.php"; // API URL
 
         Request request = new Request.Builder()
                 .url(url)

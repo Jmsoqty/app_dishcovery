@@ -1,5 +1,7 @@
 package com.example.dishcovery;
 
+import static com.paypal.pyplcheckout.ui.feature.sca.ScaUiListenerKt.runOnUiThread;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -11,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -66,7 +69,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     private String donationAmountStr;
     void fetchComments(String recipeId, Consumer<List<Comment>> callback) {
         // Define the URL for fetching comments, with the recipe ID as a query parameter
-        String url = "http://192.168.1.15/dishcovery/api/fetch_comments.php?recipe_id=" + recipeId;
+        String url = "http://192.168.1.12/dishcovery/api/fetch_comments.php?recipe_id=" + recipeId;
 
         // Create a GET request
         Request request = new Request.Builder()
@@ -370,7 +373,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                     .build();
 
             // Define the URL of your API endpoint
-            String url = "http://192.168.1.15/dishcovery/api/donate.php";
+            String url = "http://192.168.1.12/dishcovery/api/donate.php";
 
             // Create a POST request
             Request request = new Request.Builder()
@@ -434,7 +437,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             String recipeId = recipe.getRecipeId();
 
             // Fetch and display comments
-            fetchAndDisplayComments(recipeId, commentsSection, inflater);
+            fetchAndDisplayComments(recipeId, commentsSection, inflater, context);
 
             // Set up the send comment button
             sendCommentButton.setOnClickListener(v -> {
@@ -442,7 +445,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                 if (!newComment.isEmpty()) {
                     postComment(recipeId, newComment, context, () -> {
                         // After posting the comment, refresh the comments section
-                        fetchAndDisplayComments(recipeId, commentsSection, inflater);
+                        fetchAndDisplayComments(recipeId, commentsSection, inflater, context);
                         // Clear the comment input
                         commentInput.setText("");
                     });
@@ -456,7 +459,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             alertDialog.show();
         }
 
-        private void fetchAndDisplayComments(String recipeId, LinearLayout commentsSection, LayoutInflater inflater) {
+        private void fetchAndDisplayComments(String recipeId, LinearLayout commentsSection, LayoutInflater inflater, Context context) {
             // Clear existing views in the comments section
             commentsSection.removeAllViews();
 
@@ -492,6 +495,10 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                         TextView commentDate = commentView.findViewById(R.id.commentDate);
                         TextView commentText = commentView.findViewById(R.id.commentText);
                         ImageButton deleteButton = commentView.findViewById(R.id.deleteButton);
+                        Button saveButton = commentView.findViewById(R.id.saveButton);
+                        Button cancelButton = commentView.findViewById(R.id.cancelButton);
+                        EditText editCommentText = commentView.findViewById(R.id.editCommentText);
+                        LinearLayout editCommentLayout = commentView.findViewById(R.id.editCommentLayout);
 
                         // Set data to the views
                         profilePicture.setImageBitmap(comment.getProfilePicture());
@@ -507,6 +514,55 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                             deleteButton.setVisibility(View.GONE);
                         }
 
+                        if (currentUserEmail.equals(comment.getCommenterEmail())) {
+                            ImageButton editButton = commentView.findViewById(R.id.editButton);
+                            editButton.setVisibility(View.VISIBLE);
+                            editButton.setOnClickListener(editView -> {
+                                // Show edit layout
+                                editCommentLayout.setVisibility(View.VISIBLE);
+                                // Hide original comment layout
+                                commentText.setVisibility(View.GONE);
+                                // Set original comment text to edit text
+                                editCommentText.setText(comment.getCommentText());
+                            });
+                        } else {
+                            commentView.findViewById(R.id.editButton).setVisibility(View.GONE);
+                        }
+
+                        // Set up edit button click listener
+                        ImageButton editButton = commentView.findViewById(R.id.editButton);
+                        editButton.setOnClickListener(editView -> {
+                            // Show edit layout
+                            editCommentLayout.setVisibility(View.VISIBLE);
+                            // Hide original comment layout
+                            commentText.setVisibility(View.GONE);
+                            // Set original comment text to edit text
+                            editCommentText.setText(comment.getCommentText());
+                        });
+
+                        // Set up save button click listener
+                        saveButton.setOnClickListener(saveView -> {
+                            // Get edited comment text
+                            String editedText = editCommentText.getText().toString();
+                            // Make HTTP POST request to edit comment
+                            editComment(comment.getCommentId(), editedText, context);
+
+                            // Update comment text view
+                            commentText.setText(editedText);
+                            // Hide edit layout
+                            editCommentLayout.setVisibility(View.GONE);
+                            // Show original comment layout
+                            commentText.setVisibility(View.VISIBLE);
+                        });
+
+                        // Set up cancel button click listener
+                        cancelButton.setOnClickListener(cancelView -> {
+                            // Hide edit layout
+                            editCommentLayout.setVisibility(View.GONE);
+                            // Show original comment layout
+                            commentText.setVisibility(View.VISIBLE);
+                        });
+
                         // Add the comment view to the comments section
                         commentsSection.addView(commentView);
                     }
@@ -514,9 +570,75 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             });
         }
 
+        private void editComment(String commentId, String newCommentText,  Context context) {
+            // Form body with parameters
+            RequestBody formBody = new FormBody.Builder()
+                    .add("action", "edit_comment")
+                    .add("comment_id", commentId)
+                    .add("new_comment", newCommentText)
+                    .build();
+
+            // Request object
+            Request request = new Request.Builder()
+                    .url("http://192.168.1.12/dishcovery/api/edit_comment.php")
+                    .post(formBody)
+                    .build();
+
+            // Asynchronous call
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    // Handle failure
+                    e.printStackTrace();
+                    Toast.makeText(context, "Error editing comment: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    // Handle response
+                    String responseBody = response.body().string();
+                    try {
+                        JSONObject jsonResponse = new JSONObject(responseBody);
+                        String status = jsonResponse.getString("status");
+                        if (status.equals("success")) {
+                            // Edit successful
+                            Handler mainHandler = new Handler(context.getMainLooper());
+
+                            mainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(context, "Comment edited successfully", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else {
+                            // Edit failed
+                            final String message = jsonResponse.getString("message");
+                            Handler mainHandler = new Handler(Looper.getMainLooper());
+                            mainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(context, "Failed to edit comment: " + message, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Handler mainHandler = new Handler(Looper.getMainLooper());
+                        mainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(context, "Error parsing response", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+
         private void deleteCommentFromServer(String recipeId, String commentId, LinearLayout commentsSection, View commentView) {
             // Define the URL for deleting the comment
-            String url = "http://192.168.1.15/dishcovery/api/delete_comment.php";
+            String url = "http://192.168.1.12/dishcovery/api/delete_comment.php";
 
             // Create a request body with the comment ID and recipe ID
             RequestBody formBody = new FormBody.Builder()
@@ -549,9 +671,11 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             });
         }
 
+
+
         private void postComment(String recipeId, String commentText, Context context, Runnable onSuccess) {
             // Define the URL for posting a comment
-            String url = "http://192.168.1.15/dishcovery/api/add_comment.php";
+            String url = "http://192.168.1.12/dishcovery/api/add_comment.php";
 
             // Create a request body with the recipe ID and comment text
             RequestBody formBody = new FormBody.Builder()
@@ -721,7 +845,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                 .build();
 
         Request request = new Request.Builder()
-                .url("http://192.168.1.15/dishcovery/api/delete_recipe.php")
+                .url("http://192.168.1.12/dishcovery/api/delete_recipe.php")
                 .post(formBody)
                 .build();
 
@@ -829,7 +953,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                 .build();
 
         Request request = new Request.Builder()
-                .url("http://192.168.1.15/dishcovery/api/remove_bookmark.php")
+                .url("http://192.168.1.12/dishcovery/api/remove_bookmark.php")
                 .post(formBody)
                 .build();
 
@@ -865,7 +989,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                 .build();
 
         Request request = new Request.Builder()
-                .url("http://192.168.1.15/dishcovery/api/IsBookmarked.php")
+                .url("http://192.168.1.12/dishcovery/api/IsBookmarked.php")
                 .post(formBody)
                 .build();
 
