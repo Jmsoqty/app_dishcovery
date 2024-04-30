@@ -117,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void sendGoogleSignInData(String username, String email) {
-        String url = "http://192.168.1.12/dishcovery/api/add_account.php";
+        String url = "http://192.168.1.18/dishcovery/api/add_account.php";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -171,7 +171,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login() {
-        String url = "http://192.168.1.12/dishcovery/api/sign_in.php";
+        String url = "http://192.168.1.18/dishcovery/api/sign_in.php";
 
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
