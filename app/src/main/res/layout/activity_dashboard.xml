@@ -21,6 +21,7 @@
             android:id="@+id/toolbar"
             android:elevation="4dp"
             android:background="@color/green"
+            app:titleTextColor="@color/black"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             android:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
