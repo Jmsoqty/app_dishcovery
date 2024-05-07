@@ -1,5 +1,6 @@
 package com.example.dishcovery;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -8,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,8 +33,18 @@ import okhttp3.Response;
 
 public class HomeFragment extends Fragment {
 
+    private AppCompatActivity mActivity; // Store a reference to the activity
     private OkHttpClient client = new OkHttpClient();
     private RecipeAdapter recipeAdapter;
+
+    // Override onAttach to store a reference to the activity
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof AppCompatActivity) {
+            mActivity = (AppCompatActivity) context;
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -103,8 +116,7 @@ public class HomeFragment extends Fragment {
                     Gson gson = new Gson();
 
                     // Define the type for the list of Recipe objects
-                    Type listType = new TypeToken<List<Map<String, Object>>>() {
-                    }.getType();
+                    Type listType = new TypeToken<List<Map<String, Object>>>() {}.getType();
 
                     Map<String, Object> responseData = gson.fromJson(jsonData, Map.class);
 
@@ -114,8 +126,10 @@ public class HomeFragment extends Fragment {
 
                         List<Recipe> recipes = parseRecipes(recipesData);
 
-                        // Update the RecipeAdapter with the new data on the UI thread
-                        getActivity().runOnUiThread(() -> recipeAdapter.setRecipes(recipes));
+                        // Check if mActivity is not null before using it
+                        if (mActivity != null) {
+                            mActivity.runOnUiThread(() -> recipeAdapter.setRecipes(recipes));
+                        }
                     }
                 }
             }
@@ -134,6 +148,4 @@ public class HomeFragment extends Fragment {
 
         return recipes;
     }
-
-
 }
