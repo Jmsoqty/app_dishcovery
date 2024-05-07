@@ -52,7 +52,7 @@ public class FundsFragment extends Fragment {
     private List<Transaction> transactionsList = new ArrayList<>();
 
     private static final String TAG = "FundsFragment";
-    private static final String BASE_URL = "http://192.168.1.18/dishcovery/api/";
+    private static final String BASE_URL = "http://admin.plantiq.info/api_dishcovery/";
 
     private PaymentButtonContainer paymentButtonContainer;
     private View view;
@@ -321,72 +321,75 @@ public class FundsFragment extends Fragment {
         int blackColor = ContextCompat.getColor(getContext(), R.color.black);
 
         // Clear existing rows but keep the header row (first row) intact
-        while (tableLayout.getChildCount() > 1) {
-            tableLayout.removeViewAt(1); // Remove rows starting from index 1 (skip header row)
-        }
-
-        // Iterate through the transactions and add rows to the table
-        for (Transaction transaction : transactions) {
-            // Create a new row
-            TableRow row = new TableRow(getContext());
-            row.setGravity(Gravity.CENTER); // Center-align the row
-            row.setPadding(5, 10, 5, 10); // Add padding to the row
-
-            // Add the columns (Transaction ID, Amount, Sent By, Sent To, Date Sent) to the row
-            // Transaction ID
-            TextView transactionIdView = new TextView(getContext());
-            transactionIdView.setText(transaction.getTransactionId());
-            transactionIdView.setGravity(Gravity.CENTER);
-            transactionIdView.setTextColor(blackColor);
-            transactionIdView.setPadding(10, 10, 10, 10); // Add padding
-            row.addView(transactionIdView);
-
-            // Amount (with a dollar sign at the end)
-            TextView amountView = new TextView(getContext());
-            String amount = transaction.getAmount();
-            amountView.setText(String.format("%s $", amount));
-            amountView.setGravity(Gravity.CENTER);
-            amountView.setTextColor(blackColor);
-            amountView.setPadding(10, 10, 10, 10); // Add padding
-            row.addView(amountView);
-
-            // Determine the background color based on the amount
-            if (amount.startsWith("+")) {
-                // Light green background for positive amounts
-                row.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.green));
-            } else if (amount.startsWith("-")) {
-                // Light red background for negative amounts
-                row.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.light_red));
+        getActivity().runOnUiThread(() -> {
+            while (tableLayout.getChildCount() > 1) {
+                tableLayout.removeViewAt(1); // Remove rows starting from index 1 (skip header row)
             }
 
-            // Sent By
-            TextView sentByView = new TextView(getContext());
-            sentByView.setText(transaction.getSentBy());
-            sentByView.setGravity(Gravity.CENTER);
-            sentByView.setTextColor(blackColor);
-            sentByView.setPadding(10, 10, 10, 10); // Add padding
-            row.addView(sentByView);
+            // Iterate through the transactions and add rows to the table
+            for (Transaction transaction : transactions) {
+                // Create a new row
+                TableRow row = new TableRow(getContext());
+                row.setGravity(Gravity.CENTER); // Center-align the row
+                row.setPadding(5, 10, 5, 10); // Add padding to the row
 
-            // Sent To
-            TextView sentToView = new TextView(getContext());
-            sentToView.setText(transaction.getSentTo());
-            sentToView.setGravity(Gravity.CENTER);
-            sentToView.setTextColor(blackColor);
-            sentToView.setPadding(10, 10, 10, 10); // Add padding
-            row.addView(sentToView);
+                // Add the columns (Transaction ID, Amount, Sent By, Sent To, Date Sent) to the row
+                // Transaction ID
+                TextView transactionIdView = new TextView(getContext());
+                transactionIdView.setText(transaction.getTransactionId());
+                transactionIdView.setGravity(Gravity.CENTER);
+                transactionIdView.setTextColor(blackColor);
+                transactionIdView.setPadding(10, 10, 10, 10); // Add padding
+                row.addView(transactionIdView);
 
-            // Date Sent
-            TextView dateSentView = new TextView(getContext());
-            dateSentView.setText(transaction.getDateSent());
-            dateSentView.setGravity(Gravity.CENTER);
-            dateSentView.setTextColor(blackColor);
-            dateSentView.setPadding(10, 10, 10, 10); // Add padding
-            row.addView(dateSentView);
+                // Amount (with a dollar sign at the end)
+                TextView amountView = new TextView(getContext());
+                String amount = transaction.getAmount();
+                amountView.setText(String.format("%s $", amount));
+                amountView.setGravity(Gravity.CENTER);
+                amountView.setTextColor(blackColor);
+                amountView.setPadding(10, 10, 10, 10); // Add padding
+                row.addView(amountView);
 
-            // Add the completed row to the table
-            tableLayout.addView(row);
-        }
+                // Determine the background color based on the amount
+                if (amount.startsWith("+")) {
+                    // Light green background for positive amounts
+                    row.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.green));
+                } else if (amount.startsWith("-")) {
+                    // Light red background for negative amounts
+                    row.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.light_red));
+                }
+
+                // Sent By
+                TextView sentByView = new TextView(getContext());
+                sentByView.setText(transaction.getSentBy());
+                sentByView.setGravity(Gravity.CENTER);
+                sentByView.setTextColor(blackColor);
+                sentByView.setPadding(10, 10, 10, 10); // Add padding
+                row.addView(sentByView);
+
+                // Sent To
+                TextView sentToView = new TextView(getContext());
+                sentToView.setText(transaction.getSentTo());
+                sentToView.setGravity(Gravity.CENTER);
+                sentToView.setTextColor(blackColor);
+                sentToView.setPadding(10, 10, 10, 10); // Add padding
+                row.addView(sentToView);
+
+                // Date Sent
+                TextView dateSentView = new TextView(getContext());
+                dateSentView.setText(transaction.getDateSent());
+                dateSentView.setGravity(Gravity.CENTER);
+                dateSentView.setTextColor(blackColor);
+                dateSentView.setPadding(10, 10, 10, 10); // Add padding
+                row.addView(dateSentView);
+
+                // Add the completed row to the table
+                tableLayout.addView(row);
+            }
+        });
     }
+
 
 
 

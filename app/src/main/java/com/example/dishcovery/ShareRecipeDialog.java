@@ -294,7 +294,7 @@ public class ShareRecipeDialog extends DialogFragment {
                 .build();
 
         // Define the request URL
-        String url = "http://192.168.1.18/dishcovery/api/add_recipe.php";
+        String url = "http://admin.plantiq.info/api_dishcovery/add_recipe.php";
 
         // Build the POST request
         Request request = new Request.Builder()
@@ -408,7 +408,7 @@ public class ShareRecipeDialog extends DialogFragment {
                 .build();
 
         // Define the request URL
-        String url = "http://192.168.1.18/dishcovery/api/add_recipe_to_group.php";
+        String url = "http://admin.plantiq.info/api_dishcovery/add_recipe_to_group.php";
 
         // Build the POST request
         Request request = new Request.Builder()

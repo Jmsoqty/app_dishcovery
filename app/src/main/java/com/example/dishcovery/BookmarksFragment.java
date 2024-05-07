@@ -87,7 +87,7 @@ public class BookmarksFragment extends Fragment {
         }
 
         // API URL for the POST request
-        String url = "http://192.168.1.18/dishcovery/api/fetch_bookmarks.php";
+        String url = "http://admin.plantiq.info/api_dishcovery/fetch_bookmarks.php";
 
         // Create the request body with the email parameter
         RequestBody requestBody = new FormBody.Builder()
