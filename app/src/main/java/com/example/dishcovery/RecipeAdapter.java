@@ -987,7 +987,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                 .build();
 
         Request request = new Request.Builder()
-                .url("http://admin.plantiq.info/api_dishcovery/IsBookmarked.php")
+                .url("http://admin.plantiq.info/api_dishcovery/isBookmarked.php")
                 .post(formBody)
                 .build();
 
